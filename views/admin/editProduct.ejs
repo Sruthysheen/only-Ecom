@@ -1,0 +1,109 @@
+<%- include('header') %>
+<section class="content-main">
+    <form action="/api/admin/productEdited" method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-6">
+                <div class="content-header">
+                    <h2 class="content-title">Edit Product</h2>
+                    <div>
+                        <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                        <button type="submit" class="btn btn-md rounded font-sm hover-up">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>1. General info</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Product title</label>
+                                    <input type="text" name="title" placeholder="Type here" value="<%= product.title %>" class="form-control">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea placeholder="Type here" name="description" class="form-control" rows="4"><%= product.description %></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Brand name</label>
+                                    <input type="text" name="brand" placeholder="brand" value="<%= product.brand %>" class="form-control">
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>2. Pricing</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Cost in USD</label>
+                                    <input type="text" name="price" placeholder="$00.0" value="<%= product.price %>" class="form-control">
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>3. Color</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Color</label>
+                                    <input type="text" name="color" placeholder="Black" value="<%= product.color %>" class="form-control">
+                                </div>
+                                <input type="hidden" name="id" value="<%= product._id %>">
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>3. Quantity</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Quantity</label>
+                                    <input type="text" name="quantity" placeholder="Enter quantity" value="<%= product.quantity %>" class="form-control">
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>4. Category</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <select name="category" class="form-select">
+                                        <% categories.forEach((cat) => { %>
+                                            <option value="<%= cat.name %>" <%= product.category === cat.name ? 'selected' : '' %>><%= cat.name %></option>
+                                        <% }); %>
+                                    </select>
+                                    
+                                </div>   
+
+
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>5. Media</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label for="images" class="form-label">Images</label>
+                                    <input class="form-control" type="file" accept="image/*" name="images" multiple>
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- .row end// -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section> <!-- content-main end// -->
+<%- include('footer') %>
