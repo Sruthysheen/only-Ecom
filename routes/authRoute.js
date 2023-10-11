@@ -26,11 +26,14 @@ const {
     updateAddress,
     deleteAddress} = require("../controllers/userCtrl");
 
-const {checkOut,orderPlaced,orderDetails,orderPage,allOrderDetails,cancelOrder,returnOrder}=require('../controllers/orderCtrl');
+const {checkOut,orderPlaced,orderDetails,orderPage,allOrderDetails,cancelOrder,returnOrder,verifyPayment}=require('../controllers/orderCtrl');
 
-const {productSearch,categoryFilter}=require('../controllers/searchCtrl');
+const {productSearch,categoryFilter}=require('../controllers/filterCtrl');
 const {validateCoupon}=require('../controllers/couponCtrl');
+const {addToList,Wishlist,deleteWishlistItem}=require('../controllers/wishlistCtrl');
+
 const { isLogged} = require('../middleware/userAuth')
+
 
 
 
@@ -87,6 +90,7 @@ router.get('/orderDetails',isLogged,orderDetails);
 router.get('/orderPage',isLogged,orderPage);
 router.get('/allOrderDetails',isLogged,allOrderDetails);
 router.get('/cancelOrder',isLogged,cancelOrder);
+router.post('/verifyPayment',isLogged,verifyPayment)
 router.get('/return',isLogged,returnOrder);
 
 
@@ -101,6 +105,15 @@ router.get('/categoryFilter',categoryFilter);
 //coupon----------------------------------------------------------------------------------
 
 router.post('/validateCoupon',validateCoupon);
+
+
+
+//wishlist-----------------------------------------------------------------------------------
+
+
+router.get('/Wishlist',isLogged,Wishlist)//rendering the wishlist
+router.get('/addToList',isLogged,addToList)// add apriduct to the wish list
+router.get('/deleteWishlistItem',isLogged,deleteWishlistItem)
         
 
 

@@ -306,9 +306,25 @@
                                                     </a>
                                                 </div>
                                                 <div class="product-action-1">
-                                                    <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                    <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                    <a
+                                                    aria-label="Add To Wishlist"
+                                                    class="action-btn hover-up"
+                                                    onclick="wishList('<%= product[i]._id %>')"
+                                                    ><i class="fi-rs-heart"></i
+                                                  ></a>
+                        
+                        
+                        
+                        
+                                                  <a
+                                                    aria-label="Compare"
+                                                    class="action-btn hover-up"
+                                                    href="#"
+                                                    ><i class="fi-rs-shuffle"></i
+                                                  ></a>
+
+
+                                                    
                                                 </div>
                                                 <div class="product-badges product-badges-position product-badges-mrg">
                                                     <span class="hot">Hot</span>
@@ -2255,13 +2271,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+       
+        
         // Use event delegation to handle clicks on "Add To Cart" buttons
         document.querySelector('.product-grid-4').addEventListener('click', async (e) => {
             if (e.target && e.target.classList.contains('add-to-cart-btn')) {
                 // Get the product ID from the clicked button's href
                 const href = e.target.getAttribute('href');
                 const productId = new URLSearchParams(href.split('?')[1]).get('id');
-    
+               
                 // Use SweetAlert2 to show a success message for the clicked product
                 await Swal.fire({
                     title: 'Add To Cart',
@@ -2280,6 +2298,15 @@
 
 
 function addToCart(id){
+   
+    let cartCountValue = parseInt($("#cart-Count").text());
+   cartCountValue += 1;
+
+   // Set the incremented value back to the span
+   $("#cart-Count").text(cartCountValue);
+
+    
+               
                 $.ajax({
                     url:`/api/user/addToCart?id=${id}`,
                     method:"get",
@@ -2309,6 +2336,32 @@ function addToCart(id){
 
 
        </script>
+
+<script>
+    function wishList(id) {
+      $.ajax({
+        url: `/api/user/addToList?id=${id}`,
+        method: "get",
+        success: (response) => {
+          if (response.status) {
+            Swal.fire({
+              title: "ADDED TO WISHLIST",
+              text: "You seleted a Product to the wisslist",
+              icon: "success",
+              timer: 3000,
+            });
+          } else {
+            Swal.fire({
+              title: "ALREADY SELECTED!",
+              text: "You already selected",
+              icon: "error",
+              timer: 3000,
+            });
+          }
+        },
+      });
+    }
+  </script>
    
    
 

@@ -934,8 +934,7 @@
                                             <div class="product-extra-link2">
                                                 <br>
                                                 <a aria-label="Add To Wishlist" onclick="wishList('<%= product._id %>')" class="action-btn hover-up"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                
 
                                                     </div>
                                                     <br>
@@ -1401,6 +1400,36 @@
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+
+    <script>
+        function wishList(id){
+           $.ajax({
+               url:`/api/user/addToList?id=${id}`,
+               method:"get",
+               success:(response)=>{
+                   if(response.status){
+                      
+                   }else{
+                       Swal.fire({
+           title: 'ALREADY SELECTED!',
+           text: 'You already selected',
+           icon: 'error',
+           timer: 3000,
+         
+       
+         })
+                   }
+       
+               }
+           })
+       
+       
+       
+        }
+       
+           </script>
+
 <script>
 
 function addToCart(id){
@@ -1430,6 +1459,42 @@ function addToCart(id){
 
 
 </script>
+
+<script>
+    function wishList(id){
+       $.ajax({
+           url:`/api/user/addToList?id=${id}`,
+           method:"get",
+           success:(response)=>{
+               if(response.status){
+                Swal.fire({
+       title: 'ADDED TO WISHLIST',
+       text: 'You seleted a Product to the wisslist',
+       icon: 'success',
+       timer: 3000,
+     
+   
+     })
+                  
+               }else{
+                   Swal.fire({
+       title: 'ALREADY SELECTED!',
+       text: 'You already selected',
+       icon: 'error',
+       timer: 3000,
+     
+   
+     })
+               }
+   
+           }
+       })
+   
+   
+   
+    }
+   
+       </script>
 
 
 

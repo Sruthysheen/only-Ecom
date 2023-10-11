@@ -153,8 +153,7 @@
 
 
                                                  
-                                          <!------------------------------------- Modal ------------------------------------>
-
+                                          
 
 
                                           <!------------------------------------- Modal ------------------------------------>
@@ -457,8 +456,106 @@ async function placeOrder(userId) {
                         }
                     });
                 }
-            }
+                else if (response.method == 'online') {
+                    let order=response.order
+    // Replace with your Razorpay API key
+    var razorpayApiKey = 'rzp_test_MTRy2hZgCZqChR';
+
+    // Calculate the amount dynamically based on the total order amount (in paise)
+    var orderAmount = Math.round(numericValue * 100);
+
+    // Define the Razorpay options
+    var options = {
+        "key": razorpayApiKey,
+        "amount": orderAmount, // Dynamically calculated amount
+        "currency": "INR",
+        "name": "Only",
+        "description": "Order Payment",
+        "order_id": response.razorpayOrder.id, // Replace with actual order ID
+        "handler": function (response) {
+            console.log(response);
+            verifyPayment(response,order);
+            
+        },
+        "prefill": {
+            "name": "Customer Name", // Set to the customer's name
+            "email": "customer@example.com", // Set to the customer's email
+            "contact": "9000090000" // Set to the customer's contact number
+        },
+        "callback_url": "/your-server-callback-url", // Replace with your server's callback URL
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    // Create a new Razorpay instance and open the payment dialog
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+
+
+
+                    }
+
+                    else {
+                        Swal.fire({
+                            title: 'Error Occured',
+                            text: "Can't process order error occured",
+                            icon: 'fail',
+                            timer: 5000
+                        })
+
+                    }
+                }
+            })
+          function verifyPayment(response,order) {
+                
+            $.ajax({
+                url: '/api/user/verifyPayment',
+                method: 'post',
+                data: {
+                    order,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature
+                },
+                success: (response) => {
+                    
+                    if (response.status) {
+                        $.ajax({
+                            url:'/api/user/deleteCart',
+                            method:'get',
+
+                            success:(response)=>{
+                                if(response.status){
+                                    Swal.fire({
+                            title: "Order success",
+                            text: "order placed successfully",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                           
+                        })
+                        location.href='/api/user/allOrderDetails'
+
+                                }
+
+                            }
+                        })
+
+                    
+                        
+                    
+                    } else {
+                        alert("Payment failed!" + response.errMsg)
+                    }
+                
+                }
+
+
+            
+            
         });
+    }
     }
 }
 

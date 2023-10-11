@@ -109,7 +109,15 @@ var userSchema = new mongoose.Schema({
             required:true
             
         }
-    }]
+    }],
+    wishlist:{
+        type:Array,
+        ProductId:{
+            type:mongoose.Schema.Types.ObjectId,
+            required:true,
+            ref:"Product"
+        },
+    }
 });
 
 
