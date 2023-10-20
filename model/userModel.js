@@ -117,6 +117,30 @@ var userSchema = new mongoose.Schema({
             required:true,
             ref:"Product"
         },
+    },
+    wallet: {
+       
+        type:Number,
+        default:0,
+        required:true
+       
+        
+    },
+    history: {
+        type:Array,
+        amount: {
+            type: Number,
+            required: true
+        },
+        status: {
+            type: String,
+            required: true
+        },
+        timestamp: {
+            type: Date,
+            default:Date.now,
+            
+        }
     }
 });
 

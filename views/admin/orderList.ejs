@@ -4,7 +4,7 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Order List </h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
+                    
                 </div>
             </div>
             <div class="row">
@@ -35,10 +35,10 @@
         <% for (let i=0; i < orders.length;i++) { %>
             <% for (let j = 0; j < orders[i].product.length; j++) { %>
             <tr>
-                <td>2323</td>
+                <td><%=i%></td>
                 <td><b><%= orders[i].product[j].title  %></b></td>
                
-                <td>$<%= orders[i].totalPrice %></td>
+                <td>₹<%= orders[i].totalPrice %></td>
 
                 <% if (orders[i].status=='pending') { %>
 
@@ -90,67 +90,31 @@
                         </div> <!-- card-body end// -->
                     </div> <!-- card end// -->
                     <% if (totalpages) { %>
-                        <div class="pagination">
+                        <div class="pagination justify-content-center">
                           <% if (currentpage > 1) { %>
-                            <button class="btn btn-sm" "><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                            <button class="btn btn-sm" "><a href="/api/admin/adminOrderList?page=<%= currentpage - 1 %>">Previous</a></button>
                           <% } %>
                       
                           <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
-                            <button class="btn btn-sm" "><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                            <button class="btn btn-sm" "><a href="/api/admin/adminOrderList?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
                           <% } %>
                       
                           <% if (currentpage < totalpages) { %>
-                            <button class="btn btn-sm" ><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                            <button class="btn btn-sm" ><a href="/api/admin/adminOrderList?page=<%= currentpage + 1 %>">Next</a></button>
                           <% } %>
                         </div>
                       <% } %>
                 </div>
-                <div class="col-md-3">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="mb-3">Filter by</h5>
-                            <form>
-                                <div class="mb-4">
-                                    <label for="order_id" class="form-label">Order ID</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="order_id">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="order_customer" class="form-label">Customer</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="order_customer">
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Order Status</label>
-                                    <select class="form-select">
-                                        <option>Published</option>
-                                        <option>Draft</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="order_total" class="form-label">Total</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="order_total">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="order_created_date" class="form-label">Date Added</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="order_created_date">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="order_modified_date" class="form-label">Date Modified</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="order_modified_date">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="order_customer_1" class="form-label">Customer</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="order_customer_1">
-                                </div>
-                            </form>
-                            
-                        </div>
-                        
-                    </div> <!-- card end// -->
-                    
-                </div>
+                
+              
               
             </div>
            
         </section> <!-- content-main end// -->
+        <br>
+        <br>
+        <br>
+        <br>
+
         <%- include('footer') %>
         

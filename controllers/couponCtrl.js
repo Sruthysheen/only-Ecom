@@ -175,6 +175,49 @@ const updateCoupon = asyncHandler(async (req, res) => {
 //validate coupon in user side----------------------------------------------------
 
 
+// const validateCoupon = asyncHandler(async (req, res) => {
+//   try {
+//     const name = req.body.couponCode;
+
+//     // Query the database to find the coupon by its name
+//     const coupon = await Coupon.findOne({ name: name });
+
+//     if (coupon) {
+//       const user = await User.findById(req.session.user)
+
+   
+//       const userId={
+//         userId:user._id
+//       }
+
+  
+
+//       coupon.user.push(userId)
+//       await coupon.save()
+//       // If a coupon with the provided name is found, send it as a JSON response
+//       res.status(200).json({
+//         isValid: true,
+//         coupon: coupon, // Include the coupon data in the response
+//       });
+//     } else {
+//       // If no coupon with the provided name is found, send an error response
+//       res.status(404).json({
+//         isValid: false,
+//         error: 'Coupon not found',
+//       });
+//     }
+//   } catch (error) {
+//     console.log('Error happened in the coupon controller in the function validateCoupon', error);
+//     res.status(500).json({
+//       isValid: false,
+//       error: 'An error occurred while processing your request',
+//     });
+//   }
+// });
+
+
+
+
 const validateCoupon = asyncHandler(async (req, res) => {
   try {
     const name = req.body.couponCode;
@@ -182,37 +225,34 @@ const validateCoupon = asyncHandler(async (req, res) => {
     // Query the database to find the coupon by its name
     const coupon = await Coupon.findOne({ name: name });
 
-    if (coupon) {
-      const user = await User.findById(req.session.user)
-
-       // Check if user has already used the coupon
-  //   if (coupon.user.some(u => u.userId.toString() === user._id.toString())) {
-  //     res.status(400).json({
-  //         isValid: false,
-  //         error: 'You have already used this coupon',
-  //     });
-  //     return;
-  // }
-      const userId={
-        userId:user._id
-      }
-
-  
-
-      coupon.user.push(userId)
-      await coupon.save()
-      // If a coupon with the provided name is found, send it as a JSON response
-      res.status(200).json({
-        isValid: true,
-        coupon: coupon, // Include the coupon data in the response
-      });
-    } else {
+    if (!coupon) {
       // If no coupon with the provided name is found, send an error response
-      res.status(404).json({
+      return res.status(404).json({
         isValid: false,
         error: 'Coupon not found',
       });
     }
+
+    const user = await User.findById(req.session.user);
+
+    // Check if user has already used the coupon
+    if (coupon.user.some(u => u.userId.toString() === user._id.toString())) {
+      return res.status(400).json({
+        isValid: false,
+        error: 'You have already used this coupon',
+      });
+    }
+
+    // If user hasn't used the coupon, add their ID to the coupon's user array
+    coupon.user.push({ userId: user._id });
+    await coupon.save();
+
+    // Send a positive response with the coupon details
+    res.status(200).json({
+      isValid: true,
+      coupon: coupon,
+    });
+
   } catch (error) {
     console.log('Error happened in the coupon controller in the function validateCoupon', error);
     res.status(500).json({
@@ -221,6 +261,9 @@ const validateCoupon = asyncHandler(async (req, res) => {
     });
   }
 });
+
+
+
 
 module.exports={
     loadCoupon,

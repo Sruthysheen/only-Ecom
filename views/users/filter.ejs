@@ -27,9 +27,9 @@
                                     <h5 class="mb-20">Categories</h5>
                                     <ul class="cat-list">
                                       
-                                        <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category=WOMEN'S FASHION">WOMEN'S FASHION</a></li>
-                                        <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category= SHOP FOR HIM">SHOP FOR HIM</a></li>
-                                        <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category= PLUS SIZE FASHION">PLUS SIZE FASHION</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category=WOMEN'S FASHION">WOMENN'S FASHION</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category=SHOP FOR HIM">SHOP FOR HIM</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category=PLUS SIZE FASHION">PLUS SIZE FASHION</a></li>
                                         <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category=KIDS ONLY">KIDS ONLY</a></li>
                                         <li class="cat-item text-muted"><a href="/api/user/CategoryFilter?category=ONLY MATERNITY">ONLY MATERNITY</a></li>
                       
@@ -38,11 +38,11 @@
                                 <div class="col-lg-2 col-md-4 mb-lg-0 mb-md-5 mb-sm-5">
                                     <h5 class="mb-20">Brand</h5>
                                     <ul class="catego-list">
-                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=ZARA&cat=<%=cat%>">ZARA</a></li>
-                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=GUCCI&cat=<%=cat%>">GUCCI</a></li>
-                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Allensolly&cat=<%=cat%>">ALLENSOLLY</a></li>
-                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Addidas&cat=<%=cat%>">ADIDAS</a></li>
-                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Zara Athleticz&cat=<%=cat%>">BABYHUG</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Only&cat=<%=cat%>">Only</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Chanel&cat=<%=cat%>">Chanel</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Allen Solly&cat=<%=cat%>">Allen Solly</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Addidas&cat=<%=cat%>">Addidas</a></li>
+                                        <li class="cat-item text-muted"><a href="/api/user/brandFilter?brand=Babyhug&cat=<%=cat%>">Babyhug</a></li>
                                     </ul>
                                 </div>
                                 
@@ -69,20 +69,17 @@
     <li><a href="/api/user/colorFilter?color=Green&cat=<%=cat%>" data-color="Green"><span class="product-color-green"></span></a></li>
     <li><a href="/api/user/colorFilter?color=Red&cat=<%=cat%>" data-color="Red"><span class="product-color-red"></span></a></li>
     <li><a href="/api/user/colorFilter?color=Brown&cat=<%=cat%>" data-color="Brown"><span class="product-color-Brown"></span></a></li>
-    <li><a href="/api/user/colorFilter?color=Orange&cat=<%=cat%>" data-color="Orange"><span class="product-color-Orange"></span></a></li>
-    <li><a href="/api/user/colorFilter?color=Purple&cat=<%=cat%>" data-color="Purple"><span class="product-color-Purple"></span></a></li>
-    <li><a href="/api/user/colorFilter?color=Yellow&cat=<%=cat%>" data-color="Yellow"><span class="product-color-Yellow"></span></a></li>
 </ul>
 
                                     <h5 class="mb-15 mt-20">By Size</h5>
                                     <ul class="list-filter size-filter font-small">
-                                        <a href="/api/user/sizeFilter?size=s&cat=<%=cat%>"><li>S</a></li></a>
-                                        <li class="active"><a href="/api/user/sizeFilter?size=m&cat=<%=cat%>">M</a></li>
-                                        <li><a href="/api/user/sizeFilter?size=l&cat=<%=cat%>">L</a></li>
-                                        <li><a href="/api/user/sizeFilter?size=xl&cat=<%=cat%>">XL</a></li>
-                                        <li><a href="/api/user/sizeFilter?size=xxl&cat=<%=cat%>">XXL</a></li>
-                                        <li><a href="/api/user/sizeFilter?size=2xl&cat=<%=cat%>">2XL</a></li>
-                                        <li><a href="/api/user/sizeFilter?size=3xl&cat=<%=cat%>">3XL</a></li>
+                                        <a href="/api/user/sizeFilter?size=S&cat=<%=cat%>"><li>S</a></li></a>
+                                        <li class="active"><a href="/api/user/sizeFilter?size=M&cat=<%=cat%>">M</a></li>
+                                        <li><a href="/api/user/sizeFilter?size=L&cat=<%=cat%>">L</a></li>
+                                        <li><a href="/api/user/sizeFilter?size=XL&cat=<%=cat%>">XL</a></li>
+                                        <li><a href="/api/user/sizeFilter?size=XXL&cat=<%=cat%>">XXL</a></li>
+                                        <li><a href="/api/user/sizeFilter?size=2XL&cat=<%=cat%>">2XL</a></li>
+                                        <li><a href="/api/user/sizeFilter?size=3XL&cat=<%=cat%>">3XL</a></li>
                                     </ul
 
 
@@ -172,7 +169,7 @@
                                                 <div class="product-price">
                                                     <span>₹<%=product[i].price  %> </span>
                                                     <span class="old-price"
-                            >₹<%=product[i].price+product[i].offerPrice %></span
+                            >₹<%=product[i].price %></span
                           >
                                                     <a class="float-right" onclick="addToCart('<%= product[i].id %>')" ><i class="fi-rs-shopping-bag-add "></i></a>
                                                 </div>
@@ -289,17 +286,6 @@ colorItems.forEach((item) => {
     });
 });
 
-// //--------------------------filter by color- end -----------------------
-
-
-
-
-
-//-------------------------------filter by catogary---------------------------
-
-
-
-//-------------------------------filter by catogary end ---------------------------
 
 
 
@@ -308,29 +294,6 @@ colorItems.forEach((item) => {
 
 
 
-// //------------------------filter by product brand  name-------------------------------------
-// // Get all list items under the 'categor-list' class
-// const brandItems = document.querySelectorAll(".catego-list li");
-
-// // Loop through the list items and add click event listeners
-// brandItems.forEach((item) => {
-//     item.addEventListener("click", (event) => {
-        
-//         // Prevent the default behavior of the anchor tag
-//         event.preventDefault();
-
-//         // Get the brand name from the clicked link
-//         const brandName = item.querySelector("a").getAttribute("href").split("=")[1];
-
-//         // Now 'brandName' contains the selected brand name
-//         console.log("Selected brand: " + brandName);
-        
-//         window.location.href=`/api/user/brandFilter?brand=${brandName}` 
-//         // You can perform any additional actions here based on the selected brand
-//     });
-// });
-
-//------------------------filter by product brand  name-------------------------------------
 
 
 
@@ -339,41 +302,6 @@ colorItems.forEach((item) => {
 
 
 
-// //-------------------------filter by price------------------------
-// const priceItems = document.querySelectorAll(".categor-list li");
-
-// // Loop through the list items and add click event listeners
-// priceItems.forEach((item) => {
-//     item.addEventListener("click", (event) => {
-//         // Prevent the default behavior of the anchor tag
-//         event.preventDefault();
-
-//         // Get the href attribute from the anchor tag
-//         const href = item.querySelector("a").getAttribute("href");
-
-//         // Extract the query parameters from the href
-//         const params = new URLSearchParams(href.split('?')[1]);
-
-//         // Get the values of maxPrice and price
-//         const maxPrice = params.get("maxPrice");
-//         const price = params.get("price");
-
-//         // Now you have both maxPrice and price values
-//         console.log("maxPrice: " + maxPrice);
-//         console.log("price: " + price);
-
-//         // You can construct your new URL with these values
-//         window.location.href = `/api/user/priceFilter?maxPrice=${maxPrice}&price=${price}`;
-
-//         // You can perform any additional actions here based on the selected price
-//     });
-// });
-
-
-//-------------------------sort by price-end-----------------------
-
-
-//----------------------------------------------------------------
 
 
 

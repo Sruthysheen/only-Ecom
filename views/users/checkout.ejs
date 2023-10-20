@@ -149,6 +149,17 @@
                                    
                                 </div>
 
+                                <% if (user.wallet > sum) { %>
+                                    <div class="custome-radio">
+                                        <input class="form-check-input payment" required="" value="wallet" type="radio" name="payment_option" id="wallet" checked="">
+                                        <label class="form-check-label" for="wallet" data-bs-toggle="collapse" data-target="#wallet" aria-controls="paypal">wallet</label>
+                                       
+                                    </div>
+
+                                    <% } else { %>
+                                        <% } %>
+
+
 
 
 
@@ -229,6 +240,39 @@
                     
                     <div class="col-md-6">
                         <% if (user.address.length > 0) { %>
+
+                            <% if (user.wallet < sum) { %>
+                                <div class="col-lg-4">
+                                    <div class="card card-body mb-4">
+                                        <article class="icontext">
+                                            <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                                            <div class="text">
+                                                <h6 class="mb-1 card-title">Wallet</h6>
+                                                <span id="spnWalletBalance">₹<%= user.wallet%></span>
+                                                <span class="text-sm">
+                                                   <br>
+                                                   <br>
+                                                   <br>
+                            
+                                                   <br>
+                                                </span>
+                                            </div>
+                                        </article>
+                                        <% if (user.wallet >1) { %>
+                                            <button id="useWalletButton" onclick="useWallet('<%=  sum %>','<%= user.wallet %>')" class="btn btn-sm">Use Wallet</button>
+                                            <% } else { %>
+                                                <% } %>
+                                        
+                                       
+                                    </div>
+                            </div>
+
+                                <% } else { %>
+                                    <% } %>
+                            
+
+
+
                             <% for (let i = 0; i < user.address.length; i++) { %>
 
                                 <div class="form-check  col-md-6">
@@ -405,6 +449,8 @@ async function placeOrder(userId) {
     var address = $('.address:checked').val();
     var payment = $('.payment:checked').val();
 
+    
+
     const displayedSum = document.getElementById('totalValue').textContent;
     const numericValue = parseFloat(displayedSum.replace(/[^\d.]/g, ''));
 
@@ -437,6 +483,7 @@ async function placeOrder(userId) {
             },
             async: true,
             success: function(response) {
+                
                 if (response.method =='cod') {
                     $.ajax({
                         url: '/api/user/deleteCart',
@@ -496,7 +543,41 @@ async function placeOrder(userId) {
 
                     }
 
+                    else if(response.method == 'wallet'){
+
+                        alert("wallet");
+                         
+                         $.ajax({
+                             url:'/api/user/deleteCart',
+                             method:'get',
+ 
+                             success:(response)=>{
+                                
+                                 if(response.status){
+                                     
+                                     Swal.fire({
+                             title: "Order success",
+                             text: "order placed successfully",
+                             icon: "success",
+                             showConfirmButton: false,
+                             timer: 2000,
+                            
+                         })
+                        
+                         location.href='/api/user/allOrderDetails'
+ 
+                                 }
+ 
+                             }
+                         })
+                         
+ 
+                     }
+                     
+
+
                     else {
+                        
                         Swal.fire({
                             title: 'Error Occured',
                             text: "Can't process order error occured",
@@ -538,7 +619,6 @@ async function placeOrder(userId) {
                         location.href='/api/user/allOrderDetails'
 
                                 }
-
                             }
                         })
 
@@ -561,6 +641,56 @@ async function placeOrder(userId) {
 
 
     </script>
+
+
+<script>
+
+    function useWallet(sum,wallet){
+       
+        var productId = document.getElementById('productId').value;
+
+       
+         $.ajax({
+            url:"/api/user/useWallet",
+            method:"POST",
+            data:{
+                total:sum,
+                wallet:wallet,
+                prodId:productId
+            },
+            success:(response)=>{
+                if(response.status){
+                   
+                   
+                  
+                    // location.href=`/api/user/sumWallet?sum=${response.sum}`
+                    
+                }
+            }
+        }).done(function(response){
+            $.ajax({
+            url:"/api/user/sumWallet",
+            method:"POST",
+            data:{
+                sum:response.sum
+            },
+            success:(response)=>{
+                const totalAmount = parseFloat(response.balance);
+                const displayedSumElement = document.getElementById('totalValue');
+            displayedSumElement.textContent = '₹' + totalAmount.toFixed(2);
+
+            const spnWalletBalance = document.getElementById('spnWalletBalance');
+            spnWalletBalance.textContent = '₹0';
+            }
+        })
+        });  
+    }
+</script>
+
+
+
+
+
 
     <%- include('footer') %>
     

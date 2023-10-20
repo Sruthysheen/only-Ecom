@@ -2,9 +2,29 @@ const User=require("../model/userModel");
 const asyncHandler=require("express-async-handler");
 const Product = require("../model/productModel");
 const nodemailer=require("nodemailer");
-const categoryModel = require("../model/categoryModel");
+const Category = require("../model/categoryModel");
 const jwt = require('jsonwebtoken');
 const Order=require("../model/orderModel");
+const Banner=require('../model/bannerModel')
+const bcrypt=require('bcrypt')
+
+
+
+
+
+
+
+
+
+
+
+const generateHashedPassword = async (password) => {
+    const saltRounds = 10; // Number of salt rounds
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
+  };
+
 
 
 //load index-------------------------------------------------------------------------
@@ -12,15 +32,28 @@ const Order=require("../model/orderModel");
 const loadIndex = asyncHandler(async (req, res) => {
     try {
         const userId = req.session.user;
-        const product = await Product.find({isDeleted:false,status:true});
+        if(userId){
+            const category=await Category.find({status:true});
+            console.log(category.length,'>>>>>>>');
+            const product = await Product.find({isDeleted:false,status:true}).limit(12);
+          
+            const user= await User.findById(userId);
+            const banner= await Banner.find();
+            req.session.Product = product;
+    
+        res.render("index", { user, product,banner,category});
+    }
+        else{
+            const category=await Category.find({status:true});
+            console.log(category.length,'>>>>>>>');
+            const product = await Product.find({isDeleted:false,status:true}).limit(12);;
+            const user= await User.findById(userId);
+            const banner= await Banner.find();
+            req.session.Product = product;
+    
+        res.render("index", { user, product,banner,category});
 
-const user= await User.findById(userId)
-
-       
-        const category=await categoryModel.find({status:false})
-       
-        
-        res.render("index", { user, product });
+        }
     } catch (error) {
         console.log("Error happens in userController loadIndex function:", error);
     }
@@ -158,6 +191,14 @@ const loginUser=async(req,res)=>{
   }
 }
 
+const emailForgot =asyncHandler(async(req,res)=>{
+    try {
+        console.log('JJJJJJJJJJJJJJJJJJJJJJJJJj');
+        res.render('forgotOTP')
+    } catch (error) {
+        
+    }
+})
 
 
 
@@ -237,6 +278,134 @@ const logout = asyncHandler(async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
+//forgot password----------------------------------------------------------------
+
+const forgotPsdPage = asyncHandler(async (req, res) => {
+    try {
+        res.render("forgotPassword");
+    } catch (error) {
+        console.log(
+            "Error hapents in userControler forgotPsdPage  function :",
+            error
+        );
+    }
+});
+
+
+
+//check email is valid in forgot password-------------------------------------------
+
+const forgotEmailValid = asyncHandler(async (req, res) => {
+    try {
+        const { email } = req.body;
+        const findUser = await User.findOne({ email:email });
+        console.log(findUser,"thie isi user");
+        if (findUser) {
+            console.log('>>>>>>>>');
+            const otp = generateotp();
+            console.log(otp);
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                port: 587,
+                secure: false,
+                requireTLS: true,
+                auth: {
+                    user: process.env.AUTH_EMAIL,
+                    pass: process.env.AUTH_PASS,
+                },
+            });
+            console.log(transporter);
+            const info = await transporter.sendMail({
+                from: process.env.AUTH_EMAIL,
+                to: email,
+                subject: "Verify Your Account  ✔",
+                text: `Your OTP is : ${otp}`,
+                html: `<b>  <h4 >Your OTP  ${otp}</h4>    <br>  <a href="/api/user/emailOTP/">Click here</a></b>`,
+            });
+            if (info) {
+                console.log(info,"this is info");
+                req.session.forgotOTP = otp;
+                req.session.forgotEmail = req.body.email;
+                console.log(req.session.forgotEmail);
+               
+               
+               res.redirect('/api/user/emailForgot')
+               console.log('??????????????????????????????//');
+
+            } else {
+                res.json("email error");
+            }
+        } else {
+           console.log('<<<<<<<<<><><><><><><><><>');
+            res.redirect("/api/user/forgotPassword");
+        }
+    } catch (error) {
+        console.log(
+            "Error happens in userControler forgotEmailValid function:",
+            error
+        );
+    }
+});
+
+
+
+
+//--------------------------------------------------------------------
+
+const forgotPsdOTP = asyncHandler(async (req, res) => {
+    try {
+        const { first, second, third, fourth, fifth, six } = req.body;
+        const enteredOTP = first + second + third + fourth + fifth + six;
+        console.log("otp entered by user :", enteredOTP);
+        if (enteredOTP === req.session.forgotOTP) {
+            res.render("resetPassword");
+        } else {
+            console.log("error in otp ");
+        }
+    } catch (error) {
+        console.log(
+            "Error hapents in userControler forgotPsdOTP  function :",
+            error
+        );
+    }
+});
+
+
+
+//------------------------------
+
+const updatePassword = asyncHandler(async (req, res) => {
+    try {
+        const email = req.session.forgotEmail;
+        const user = await User.findOne({ email });
+        if (user) {
+            const hashedPassword = await generateHashedPassword(req.body.password);
+            const updateUser = await User.findByIdAndUpdate(
+                user._id,
+                {
+                    password: hashedPassword,
+                },
+                { new: true }
+            );
+
+
+            res.redirect("/api/user/index");
+        }
+    } catch (error) {
+        console.log(
+            "Error hapents in userControler updatePassword  function :",
+            error
+        );
+    }
+});
+
+
+
+
+
+
 
 
 
@@ -452,6 +621,10 @@ module.exports={
     createUser,
     loadIndex,
     emailVerified,
+    forgotPsdPage,
+    forgotEmailValid,
+    forgotPsdOTP,
+    updatePassword,
     logout,
     userProfile,
     addProfilePic,
@@ -461,6 +634,7 @@ module.exports={
     editAddress,
     updateAddress,
     deleteAddress,
-    resendOtp
+    resendOtp,
+    emailForgot
 
 }  

@@ -136,6 +136,27 @@ const orderPlaced=asyncHandler(async(req,res)=>{
          res.json({ payment: false, method: "online", razorpayOrder: generatedOrder, order: orderDb ,orderId:user,qty:cartItemDetails});
                      
       }
+      else if(order.payment=='wallet'){
+        const a=   user.wallet -= totalPrice;
+           const transaction = {
+               amount: a,
+               status: "debit",
+               timestamp: new Date(), // You can add a timestamp to the transaction
+           };
+       
+           // Push the transaction into the user's history array
+           user.history.push(transaction);
+
+         
+
+          
+            await user.save();
+   
+           
+           res.json({ payment: true, method: "wallet", });
+           
+        }
+      
      }catch (error) {
         console.log('Error form order Ctrl in the function orderPlaced', error);
                 
@@ -180,11 +201,11 @@ const allOrderDetails = asyncHandler(async (req, res) => {
        
      
 
-        const itemsperpage = 3;
+        const itemsperpage = 10;
         const currentpage = parseInt(req.query.page) || 1;
         const startindex = (currentpage - 1) * itemsperpage;
         const endindex = startindex + itemsperpage;
-        const totalpages = Math.ceil(orders.length / 3);
+        const totalpages = Math.ceil(orders.length /itemsperpage );
         const currentproduct = orders.slice(startindex,endindex);
       
     
@@ -212,16 +233,31 @@ const cancelOrder = asyncHandler(async (req, res) => {
         status: 'canceled'
       }, { new: true });
 
-
-     
-  
-
-
-
+      
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
+
+      if (order.payment !== 'cod') {
+        user.wallet += order.totalPrice;
+
+        const transaction = {
+            amount:order.totalPrice ,
+            status: "credit",
+            timestamp: new Date(), // You can add a timestamp to the transaction
+        };
+      
+        user.history.push(transaction);
+
+
+
+        await user.save();
+
+
+
+      }
   
+
   
       for (const productData of order.product) {
         const productId = productData.ProductId;
@@ -267,6 +303,19 @@ const cancelOrder = asyncHandler(async (req, res) => {
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
+
+      user.wallet += order.totalPrice;
+
+
+      const transaction = {
+        amount: user.wallet ,
+        status: "credit",
+        timestamp: new Date(), // You can add a timestamp to the transaction
+    };
+    
+    user.history.push(transaction);
+      await user.save();
+  
   
   
       for (const productData of order.product) {
@@ -303,11 +352,11 @@ const cancelOrder = asyncHandler(async (req, res) => {
 const adminOrderList=asyncHandler(async(req,res)=>{
   try {
     const orders=await Order.find().sort({createdOn:-1});
-    const itemsperpage = 3;
+    const itemsperpage = 5;
     const currentpage = parseInt(req.query.page) || 1;
     const startindex = (currentpage - 1) * itemsperpage;
     const endindex = startindex + itemsperpage;
-    const totalpages = Math.ceil(orders.length / 3);
+    const totalpages = Math.ceil(orders.length / itemsperpage);
     const currentproduct = orders.slice(startindex,endindex);
     res.render('orderList',{orders:currentproduct,totalpages,currentpage})
   } catch (error) {
@@ -322,8 +371,12 @@ const adminOrderDetails=asyncHandler(async(req,res)=>{
   try {
     const orderId=req.query.orderId;
     const order=await Order.findById(orderId);
-    const userId=order.userId;
+    console.log(order);
+    const userId = order.userId;
+    console.log(userId,'this is userdata');
+    // const user = await User.findOne({ _id: userId });
     const user=await User.findById(userId);
+    console.log("......................................................",user);
     res.render('orderDetails',{user,order});
   } catch (error) {
     console.log("error in adminOrderDetails function",error);
@@ -461,6 +514,8 @@ const generateOrderRazorpay = (orderId, total) => {
 
 const verifyPayment=asyncHandler(async(req,res)=>{
   try {
+
+    console.log(req.body.order,"this is req.body");
     const ordr=req.body.order
      const order=await Order.findByIdAndUpdate(ordr._id,{
       status:"conformed"
@@ -470,7 +525,7 @@ const verifyPayment=asyncHandler(async(req,res)=>{
       res.json({ status: true });
       
   } catch (error) {
-      console.log('errro happemce in cart ctrl in function verifyPayment',error); 
+      console.log('errro happemce in order ctrl in function verifyPayment',error); 
       
   }
 });
@@ -498,6 +553,152 @@ const verifyOrderPayment = (details) => {
 
 
 
+//---------when user click wallet use chenking the cuurent sum and reduce the wallet    
+const useWallet=asyncHandler(async(req,res)=>{
+  try {
+     
+      const userId=req.session.user;
+      const user=await User.findById(userId)
+
+      if(user){
+          let a=req.body
+         
+          let sum= a.total - a.wallet
+         
+         res.json({status:true,sum})
+      } 
+  } catch (error) {
+      console.log('errro happemce in cart ctrl in function useWallet',error); 
+      
+  }
+})
+
+
+
+//----------loading sales report page ----
+const loadsalesReport=asyncHandler(async(req,res)=>{
+  try {
+
+
+      const orders= await Order.find({status:'delivered'})
+
+    
+      const itemsperpage = 3;
+      const currentpage = parseInt(req.query.page) || 1;
+      const startindex = (currentpage - 1) * itemsperpage;
+      const endindex = startindex + itemsperpage;
+      const totalpages = Math.ceil(orders.length / 3);
+      const currentproduct = orders.slice(startindex,endindex);
+
+ res.render('salesReport',{orders:currentproduct,totalpages,currentpage})
+
+
+      
+  } catch (error) {
+      console.log('errro happemce in cart ctrl in function loadsalesReport',error); 
+      
+  }
+})
+//-----------------------------------
+
+//-----sortinhg the sales report ----------------
+const salesReport = asyncHandler(async (req, res) => {
+  try {
+      const date = req.query.date;
+      let orders;
+
+      const currentDate = new Date();
+
+      // Helper function to get the first day of the current month
+      function getFirstDayOfMonth(date) {
+          return new Date(date.getFullYear(), date.getMonth(), 1);
+      }
+
+      // Helper function to get the first day of the current year
+      function getFirstDayOfYear(date) {
+          return new Date(date.getFullYear(), 0, 1);
+      }
+
+      switch (date) {
+          case 'today':
+              orders = await Order.find({
+                  status: 'delivered',
+                  createdOn: {
+                      $gte: new Date().setHours(0, 0, 0, 0), // Start of today
+                      $lt: new Date().setHours(23, 59, 59, 999), // End of today
+                  },
+              });
+              break;
+           case 'week':
+              const startOfWeek = new Date(currentDate);
+              startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // Set to the first day of the week (Sunday)
+              startOfWeek.setHours(0, 0, 0, 0);
+
+              const endOfWeek = new Date(startOfWeek);
+              endOfWeek.setDate(startOfWeek.getDate() + 6); // Set to the last day of the week (Saturday)
+              endOfWeek.setHours(23, 59, 59, 999);
+
+              orders = await Order.find({
+                  status: 'delivered',
+                  createdOn: {
+                      $gte: startOfWeek,
+                      $lt: endOfWeek,
+                  },
+              });
+              break;
+          case 'month':
+              const startOfMonth = getFirstDayOfMonth(currentDate);
+              const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
+
+              orders = await Order.find({
+                  status: 'delivered',
+                  createdOn: {
+                      $gte: startOfMonth,
+                      $lt: endOfMonth,
+                  },
+              });
+              break;
+          case 'year':
+              const startOfYear = getFirstDayOfYear(currentDate);
+              const endOfYear = new Date(currentDate.getFullYear(), 11, 31, 23, 59, 59, 999);
+
+              orders = await Order.find({
+                  status: 'delivered',
+                  createdOn: {
+                      $gte: startOfYear,
+                      $lt: endOfYear,
+                  },
+              });
+             
+              break;
+          default:
+              // Fetch all orders
+              orders = await Order.find({ status: 'delivered' });
+      }
+
+      const itemsperpage = 3;
+      const currentpage = parseInt(req.query.page) || 1;
+      const startindex = (currentpage - 1) * itemsperpage;
+      const endindex = startindex + itemsperpage;
+      const totalpages = Math.ceil(orders.length / 3);
+      const currentproduct = orders.slice(startindex,endindex);
+
+ res.render('salesReport',{orders:currentproduct,totalpages,currentpage})
+    
+  } catch (error) {
+      console.log('Error occurred in salesReport route:', error);
+      // Handle errors and send an appropriate response
+      res.status(500).json({ error: 'An error occurred' });
+  }
+});
+//-------------------------------------------
+
+
+
+
+
+
+
 
 
 
@@ -522,7 +723,11 @@ module.exports={
     changeStatusCanceled,
     changeStatusDelivered,
     changeStatusReturned,
-    verifyPayment
+    verifyPayment,
+    useWallet,
+    loadsalesReport,
+    salesReport
+
 
     
 }

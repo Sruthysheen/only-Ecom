@@ -16,6 +16,10 @@ const {
     resendOtp, 
     loadIndex,
     emailVerified,
+    forgotPsdPage,
+    forgotEmailValid, 
+    forgotPsdOTP,
+    updatePassword, 
     logout,
     userProfile,
     addProfilePic,
@@ -24,13 +28,16 @@ const {
     addUserAddress,
     editAddress,
     updateAddress,
+    emailForgot,
     deleteAddress} = require("../controllers/userCtrl");
 
-const {checkOut,orderPlaced,orderDetails,orderPage,allOrderDetails,cancelOrder,returnOrder,verifyPayment}=require('../controllers/orderCtrl');
+const {checkOut,orderPlaced,orderDetails,orderPage,allOrderDetails,cancelOrder,returnOrder,verifyPayment,useWallet}=require('../controllers/orderCtrl');
 
-const {productSearch,categoryFilter}=require('../controllers/filterCtrl');
+const {productSearch,CategoryFilter,filterSearch,colorFilter,priceFilter,brandFilter,clearFilter,sortByPrice,sizeFilter}=require('../controllers/filterCtrl');
 const {validateCoupon}=require('../controllers/couponCtrl');
 const {addToList,Wishlist,deleteWishlistItem}=require('../controllers/wishlistCtrl');
+const {addMoneyWallet,updateMongoWallet,sumWallet,sumWalletBuynow,walletPayment}=require('../controllers/walletCtrl');
+const {invoice,invoices}=require('../controllers/invoiceCtrl');
 
 const { isLogged} = require('../middleware/userAuth')
 
@@ -48,9 +55,13 @@ router.post('/register',createUser);
 router.post('/emailVerified',emailVerified)
 router.get('/login',loginUser);
 router.post('/login',verifyUser);
+router.get('/forgotPassword',forgotPsdPage);
+router.post('/forgotEmailValid',forgotEmailValid);
+router.post('/forgotPsdOTP', forgotPsdOTP);
+router.post('/updatePassword', updatePassword);
 router.get('/logout',logout);
 router.post('/resendOTP',resendOtp);
-
+router.get('/emailForgot',emailForgot)
 
 
 //user profile----------------------------------------------------------------------
@@ -95,16 +106,34 @@ router.get('/return',isLogged,returnOrder);
 
 
 
-//search---------------------------------------------------------------------------------
+//filter---------------------------------------------------------------------------------
 
 router.post('/productSearch',productSearch);
-router.get('/categoryFilter',categoryFilter);
-
+router.get('/CategoryFilter',CategoryFilter);
+router.post('/filterSearch',filterSearch);
+router.get('/priceFilter',priceFilter);
+router.get('/brandFilter',brandFilter);
+router.get('/sizeFilter',sizeFilter);
+router.get('/clearFilter',clearFilter);//clear all the filter 
+router.get('/sortByPrice',sortByPrice);
+router.get('/colorFilter',colorFilter);
 
 
 //coupon----------------------------------------------------------------------------------
 
 router.post('/validateCoupon',validateCoupon);
+
+
+
+
+//wallet-------------------------------------------------------------------------------------
+
+router.post('/addMoneyWallet',isLogged,addMoneyWallet)
+router.post('/updateMongoWallet',isLogged,updateMongoWallet)
+router.post('/useWallet',isLogged,useWallet)
+router.get('/sumWalletBuynow',isLogged,sumWalletBuynow)
+router.post('/walletPayment',isLogged,walletPayment)
+router.post('/sumWallet',sumWallet);
 
 
 
@@ -114,6 +143,15 @@ router.post('/validateCoupon',validateCoupon);
 router.get('/Wishlist',isLogged,Wishlist)//rendering the wishlist
 router.get('/addToList',isLogged,addToList)// add apriduct to the wish list
 router.get('/deleteWishlistItem',isLogged,deleteWishlistItem)
+
+
+
+//invoice--------------------------------------------------------------------------------------
+
+router.get('/invoice',isLogged,invoice);
+router.get('/invoices',isLogged,invoices);
+
+
         
 
 

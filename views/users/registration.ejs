@@ -119,13 +119,13 @@ if (email.value.trim() === '') {
    }, 5000)
    return false;
 }
-if (!emailRegex.test(email.value)) {
-   emailError.innerHTML = "Please enter a valid email"
-   setTimeout(() => {
-      emailError.innerHTML = ''
-   }, 5000);
-   return false;
-}
+// if (!emailRegex.test(email.value)) {
+//    emailError.innerHTML = "Please enter a valid email"
+//    setTimeout(() => {
+//       emailError.innerHTML = ''
+//    }, 5000);
+//    return false;
+// }
 
 // password feild
 if (password.value.trim() === '') {

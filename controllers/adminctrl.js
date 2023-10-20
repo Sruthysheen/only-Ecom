@@ -1,9 +1,95 @@
 const asyncHandler = require('express-async-handler')
 const User = require('../model/userModel')
+const Order=require('../model/orderModel')
+const Product= require('../model/productModel')
+const Category=require('../model/categoryModel')
 
 
 
-//admin login
+
+//load admin dashboard---------------------------------------------------------------
+
+const adminDashboard = asyncHandler(async (req, res) => {
+    try {
+        const products = await Product.find();
+        const orders = await Order.find({status:"delivered"});
+        const category=await Category.find()
+        const users= await User.find()
+
+
+
+        const latestOrders = await Order.find().sort({ createdOn: -1 }).limit(5);
+       
+
+
+
+
+        const productCount = products.length;
+        const orderCount = orders.length;
+        const categoryCount=category.length
+      
+        const totalRevenue = orders.reduce((total, order) => total + order.totalPrice, 0);
+console.log(totalRevenue,"this is total revanut");
+
+          //-------------------this is for the sales graph -----
+          const monthlySales = await Order.aggregate([
+            {
+                $match: {
+                    status: "delivered", // Filter by status
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        $month: '$createdOn',
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $sort: {
+                    '_id': 1,
+                },
+            },
+        ]);
+        const monthlySalesArray = Array.from({ length: 12 }, (_, index) => {
+            const monthData = monthlySales.find((item) => item._id === index + 1);
+            return monthData ? monthData.count : 0;
+        });
+
+        //-------------------this is for the sales graph -end ----
+
+        ///----------this is for the product data------
+        const productsPerMonth = Array(12).fill(0);
+
+        // Iterate through each product
+        products.forEach(product => {
+          // Extract month from the createdAt timestamp
+          const creationMonth = product.createdAt.getMonth(); // JavaScript months are 0-indexed
+    
+          // Increment the count for the corresponding month
+          productsPerMonth[creationMonth]++;
+        });
+        ///----------this is for the product data--end----
+        
+        res.render('dashboard',{totalRevenue, orderCount, productCount,categoryCount ,monthlySalesArray,productsPerMonth,latestOrders});
+
+    } catch (error) {
+        console.log('Error happened in admin controller at adminLoginPage function ', error);
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+//admin login-----------------------------------------------------------------------
 
 const loginAdmin=asyncHandler(async(req,res)=>{
     try {
@@ -14,14 +100,7 @@ const loginAdmin=asyncHandler(async(req,res)=>{
 })
 
 
-const adminDashboard= asyncHandler(async (req, res) => {
-    try {
-        res.render('dashboard')
 
-    } catch (error) {
-        console.log('Error happened at admin dashboard ', error);
-    }
-})
 
 
 //admin verification
@@ -35,7 +114,7 @@ const adminVerifyLogin=asyncHandler(async(req,res)=>{
         // console.log('admin data:',findAdmin);
         if(findAdmin && await findAdmin.isPasswordMatched(password)){
             req.session.Admin=true;
-            res.render('dashboard')
+            res.redirect('/api/admin/dashboard');
         }
         else{
             res.redirect('/api/admin/login');

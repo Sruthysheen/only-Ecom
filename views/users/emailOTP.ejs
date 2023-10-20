@@ -45,7 +45,7 @@
                                <button id="resendButton" class="btn btn-secondary btn-sm" onclick="requestResendOTP('<%= locals.email %>')" disabled>Resend OTP</button>
   
                                 <!-- Countdown Timer Display -->
-                              <p id="timer" class="mt-3">Please wait 10 seconds before resending OTP.</p>
+                              <p id="timer" class="mt-3">Please wait 20 seconds before resending OTP.</p>
                               </div>
                         </div>
                         <!-- <div class="card-2">
@@ -65,7 +65,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        let countdown = 10;
+        let countdown = 20;
 
         function updateTimer() {
             document.getElementById('timer').innerText = `Please wait ${countdown} seconds before resending OTP.`;
@@ -91,7 +91,7 @@
                 body: JSON.stringify({ email: email })  // The user's email should be captured and sent for resend
             }).then(response => response.json()).then(data => {
                 if (data.success) {
-                    countdown = 10;
+                    countdown = 20;
                     document.getElementById('resendButton').disabled = true;
 
                     setInterval(updateTimer, 1000);

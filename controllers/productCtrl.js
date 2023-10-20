@@ -3,10 +3,14 @@ const Product=require('../model/productModel');
 const slugify=require('slugify');
 const Category=require('../model/categoryModel');
 const User=require('../model/userModel');
+const fs = require('fs');
+const { promisify } = require('util');
+const unlinkAsync = promisify(fs.unlink);
+const path= require('path');
 
 
 
-//get all products
+//get all products-------------------------------------------------------------------------
 
 const allProducts=asyncHandler(async(req,res)=>{
     
@@ -29,7 +33,7 @@ const allProducts=asyncHandler(async(req,res)=>{
 });
 
 
-//add Product page rendering
+//add Product page rendering-----------------------------------------------------------
 
 const addProduct = asyncHandler(async (req, res) => {
     try {
@@ -43,18 +47,32 @@ const addProduct = asyncHandler(async (req, res) => {
 })
 
 
-// create a new product and save to database
+// create a new product and save to database---------------------------------------------
 
 const createProduct = asyncHandler(async (req, res) => {
     try {
+        const { title } = req.body;
         const productData = req.body;
 
-        const productExist = await Product.findOne({ title: productData.title });
+        const productExist = await Product.findOne({ title });
 
+        
         if (!productExist) {
-            if (productData.title) {
-                productData.slug = slugify(productData.title);
-            }
+            const caseInsensitiveCategoryExist = await Product.findOne({
+                title: { $regex: new RegExp('^' + title + '$', 'i') }
+            });
+            if(caseInsensitiveCategoryExist){
+                res.redirect('/api/admin/addProduct');
+
+            }else{
+                if (productData.title) {
+                    productData.slug = slugify(productData.title);
+                }
+
+            
+
+
+
 
             const images = [];
             if (req.files && req.files.length > 0) {
@@ -67,18 +85,20 @@ const createProduct = asyncHandler(async (req, res) => {
                 title: productData.title,
                 description: productData.description,
                 brand: productData.brand,
-                slug: productData.slug,  // Corrected this line
+                slug: productData.title,  // Corrected this line
                 price: productData.price,
                 color: productData.color,
                 quantity: productData.quantity,
-                category: productData.category,  // Corrected the typo here
+                category: productData.category,
+                size:productData.size,  // Corrected the typo here
                 images: images,
             });
 
             const pr = await newProduct.save();
 
             res.redirect('/api/admin/product');
-        } else {
+        }
+    } else {
             console.log('Product already exists');
             res.redirect('/api/admin/addProduct');
         }
@@ -90,7 +110,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
 
 
-//rendering specific product edit page
+//rendering specific product edit page-----------------------------------------------------
 
 const editProduct = asyncHandler(async (req, res) => {
     try {
@@ -111,7 +131,7 @@ const editProduct = asyncHandler(async (req, res) => {
     }
 });
 
-//edit product
+//edit product-------------------------------------------------------------------------
 
 const productEdited = asyncHandler(async (req, res) => {
     try {
@@ -126,6 +146,7 @@ const productEdited = asyncHandler(async (req, res) => {
             price: productData.price,
             color: productData.color,
             quantity: productData.quantity,
+            size:productData.size,
             category: productData.category
         };
 
@@ -145,7 +166,7 @@ const productEdited = asyncHandler(async (req, res) => {
 
 
 
-//aproduct view
+//aproduct view----------------------------------------------------------------------
 
 const aProductPage = asyncHandler(async (req, res) => {
     try {
@@ -167,7 +188,7 @@ const aProductPage = asyncHandler(async (req, res) => {
 });
 
 
-//shop a product page
+//shop a product page-------------------------------------------------------------
 
 const shopProduct = asyncHandler(async (req, res) => {
     try {
@@ -196,7 +217,7 @@ const shopProduct = asyncHandler(async (req, res) => {
 
 
 
-//unlist a product
+//unlist a product---------------------------------------------------------
 
 const unlistProduct = asyncHandler(async (req, res) => {
     try {
@@ -223,7 +244,7 @@ const unlistProduct = asyncHandler(async (req, res) => {
 
 
 
-//list product
+//list product-----------------------------------------------------------
 
 
 
@@ -251,7 +272,7 @@ const listProduct = asyncHandler(async (req, res) => {
 });
 
 
-//product delete
+//product delete------------------------------------------------------------
 
 const deleteProduct=asyncHandler(async(req,res)=>{
     try {
@@ -264,7 +285,42 @@ const deleteProduct=asyncHandler(async(req,res)=>{
     } catch (error) {
       console.log("deleteProduct error");  
     }
-})
+});
+
+//delete single image-----------------------------------------------------------
+
+const deleteSingleImage = asyncHandler(async (req, res) => {
+    try {
+      console.log("------------------------------------------------------",req.query);
+      const id = req.query.id;
+      const imageToDelete = req.query.img;
+  
+      // Update the product in the database to remove the image reference
+      const product = await Product.findByIdAndUpdate(id, {
+        $pull: { images: imageToDelete }
+      });
+  
+      // Delete the image file from the filesystem
+      const imagePath = path.join('public', 'admin', 'assets', 'imgs', 'category', imageToDelete);
+      await unlinkAsync(imagePath);
+  
+      console.log('Deleted image:', imageToDelete);
+  
+      res.redirect(`/api/admin/editProduct?id=${product._id}`);
+    } catch (error) {
+      console.log('Error occurred in categoryController deleteSingleImage function', error);
+     
+    }
+  });
+
+
+
+
+
+
+
+
+
 
 
 
@@ -283,5 +339,6 @@ module.exports={
     shopProduct,
     unlistProduct,
     listProduct,
-    deleteProduct
+    deleteProduct,
+    deleteSingleImage
 }

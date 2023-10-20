@@ -56,4 +56,28 @@
         </div>
     </section>
 </main>
+<script>
+
+function validateLoginForm() {
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var emailError = document.getElementById("email-error");
+    var passwordError = document.getElementById("password-error");
+    var isValid = true;
+
+    // Basic validation for email using regex.
+    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailPattern.test(email)) {
+        emailError.textContent = "Please enter a valid email address.";
+        isValid = false;
+    } else {
+        emailError.textContent = "";
+    }
+
+    
+   
+
+    return isValid; // If any criteria are not met, it will return false and prevent the form submission.
+}
+</script>
     <%-include('footer')%>

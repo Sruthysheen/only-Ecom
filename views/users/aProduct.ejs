@@ -1433,6 +1433,14 @@
 <script>
 
 function addToCart(id){
+
+    let cartCountValue = parseInt($("#cart-Count").text());
+   cartCountValue += 1;
+
+   // Set the incremented value back to the span
+   $("#cart-Count").text(cartCountValue);
+
+   
                 $.ajax({
                     url:`/api/user/addToCart?id=${id}`,
                     method:"get",

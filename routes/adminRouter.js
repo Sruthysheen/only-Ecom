@@ -2,9 +2,11 @@ const express= require("express");
 const router=express();
 const {loginAdmin, adminDashboard,adminVerifyLogin, userField, blockUser, unblockUser,logout}=require('../controllers/adminctrl');
 const { allCategory,addCategory,editCategory, deleteCategory,updateCategory,unlistCategory, listCategory } = require("../controllers/categoryCtrl");
-const {allProducts,addProduct,createProduct,editProduct,productEdited,unlistProduct,listProduct,deleteProduct}=require("../controllers/productCtrl");
-const {adminOrderDetails,changeStatusPending,changeStatusConfirmed,changeStatusShipped,changeStatusCanceled,changeStatusDelivered,changeStatusReturned, adminOrderList}=require('../controllers/orderCtrl');
+const {allProducts,addProduct,createProduct,editProduct,productEdited,unlistProduct,listProduct,deleteProduct,deleteSingleImage}=require("../controllers/productCtrl");
+const {adminOrderDetails,changeStatusPending,changeStatusConfirmed,changeStatusShipped,changeStatusCanceled,
+    changeStatusDelivered,changeStatusReturned, adminOrderList,loadsalesReport,salesReport}=require('../controllers/orderCtrl');
 const {loadCoupon,addCoupon,coupon,editCoupon,deleteCoupon,updateCoupon}=require('../controllers/couponCtrl')
+const {banner,addNewBanner,createBanner,editBanner,updateBanner,deleteBanner}=require('../controllers/bannerCtrl');
 router.set('view engine','ejs'); 
 router.set('views','./views/admin');
 
@@ -12,7 +14,7 @@ router.set('views','./views/admin');
 const {upload}=require('../multer/multer');
 
 
-
+const {bannerCrop}=require('../sharp/imageCrop');
 
 //admin route------------------------------------------------------------------------
 
@@ -36,6 +38,7 @@ router.post('/productEdited',upload.array('images', 12),productEdited);
 router.get('/unlistProduct',unlistProduct);
 router.get('/listProduct',listProduct);
 router.get('/deleteProduct',deleteProduct);
+router.get('/deleteSingleImage',deleteSingleImage);
 
 
 
@@ -73,8 +76,19 @@ router.get('/editCoupon',editCoupon);
 router.post('/updateCoupon',updateCoupon);
 router.get('/deleteCoupon',deleteCoupon);
 
+//banner route--------------------------------------------------------------------------------
 
+router.get('/banner',banner);
+router.get('/addNewBanner',addNewBanner);
+router.post('/createBanner',upload.single('image'),createBanner);
+router.get('/editBanner',editBanner);
+router.post('/updateBanner',upload.single('image'),updateBanner);
+router.get('/deleteBanner',deleteBanner);
 
+//sales report------------------------------------------------------------------------------
+
+router.get('/loadsalesReport',loadsalesReport)
+router.get('/salesReport',salesReport)
 
 
 

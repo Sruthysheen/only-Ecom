@@ -7,15 +7,23 @@ const Category=require('../model/categoryModel');
 const addCategory=asyncHandler(async(req,res)=>{
     try {
         const {name,description}=req.body;
-        if (!description) {
-            // if there is no description respond with a 400 Bad Request status
-            return res.status(400).send('Description is required');
-        }
+        // if (!description) {
+        //     // if there is no description respond with a 400 Bad Request status
+        //     return res.status(400).send('Description is required');
+        // }
         const categoryExist=await Category.findOne({name});
         if(categoryExist)
         {
-            return res.status(400).send('Category already exists');
-        }
+           res.redirect('/api/admin/category');
+        }else{
+            const caseInsensitiveCategoryExist = await Category.findOne({
+                name: { $regex: new RegExp('^' + name + '$', 'i') }
+            });
+    
+            if (caseInsensitiveCategoryExist) {
+                
+                res.redirect('/api/admin/category');
+            }
        
             const newCategory=new Category(
                 {
@@ -27,6 +35,7 @@ const addCategory=asyncHandler(async(req,res)=>{
         
         await newCategory.save();
         res.redirect('/api/admin/category');
+            }
     } catch (error) {
         console.log("add category error",error);
         
