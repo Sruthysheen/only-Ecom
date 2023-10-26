@@ -631,8 +631,8 @@ const loadsalesReport=asyncHandler(async(req,res)=>{
 const salesReport = asyncHandler(async (req, res) => {
   try {
       const date = req.query.date;
+      const format = req.query.format;
       let orders;
-
       const currentDate = new Date();
 
       // Helper function to get the first day of the current month
@@ -701,8 +701,37 @@ const salesReport = asyncHandler(async (req, res) => {
               // Fetch all orders
               orders = await Order.find({ status: 'delivered' });
       }
+      if (format === 'excel') {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sales Report');
 
-      const itemsperpage = 3;
+        worksheet.columns = [
+          { header: 'Order ID', key: 'id', width: 30 },
+          { header: 'Product name', key: 'name', width: 30 },
+          { header: 'Price', key: 'price', width: 15 },
+          { header: 'Status', key: 'status', width: 20 },
+          { header: 'Date', key: 'date', width: 15 }
+         
+      ];
+      orders.forEach(order => {
+        order.product.forEach(product => {
+            worksheet.addRow({
+                id: order._id,
+                name: product.title,
+                price: order.totalPrice,
+                status: order.status,
+                date: order.createdOn.toLocaleDateString()
+                // ... (Fill other columns as necessary)
+            });
+        });
+    });
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
+    await workbook.xlsx.write(res);
+    return res.end();
+  }else{
+
+    const itemsperpage = 3;
       const currentpage = parseInt(req.query.page) || 1;
       const startindex = (currentpage - 1) * itemsperpage;
       const endindex = startindex + itemsperpage;
@@ -711,6 +740,11 @@ const salesReport = asyncHandler(async (req, res) => {
 
  res.render('salesReport',{orders:currentproduct,totalpages,currentpage})
     
+
+  }
+
+
+      
   } catch (error) {
       console.log('Error occurred in salesReport route:', error);
       // Handle errors and send an appropriate response
@@ -810,9 +844,9 @@ const buynowPlaceOrder=asyncHandler(async(req,res)=>{
          console.log('yes iam the cod methord');
           res.json({ payment: true, method: "cod", order: oderDb ,qty:1,oderId:user});
 
-       }else if(oder.payment=='online'){
+       }else if(oder.payment=='online'){0
          console.log('yes iam the razorpay methord');
-
+0
           const generatedOrder = await generateOrderRazorpay(oderDb._id, oderDb.totalPrice);
           res.json({ payment: false, method: "online", razorpayOrder: generatedOrder, order: oderDb ,oderId:user,qty:1});
                       

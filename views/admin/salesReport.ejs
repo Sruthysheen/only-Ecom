@@ -12,15 +12,15 @@
                         <option value="month">Report of this month</option>
                         <option value="year">Report of this year</option>
                     </select>
-                 
                 </div>
 
                 <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                     
-                    <a class="btn btn-primary" href="#">Sales Report</a>
-                    <!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print mr-5"></i>Print</a> -->
+                    <a class="btn btn-primary" href="#" id="downloadExcel">Download Excel</a>
+                    
                 </div>
-                
+
+               
             </div>
             <div class="row">
                 <div class="col-md-9">
@@ -32,7 +32,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Customer name</th>
+                                            <th>Product name</th>
                                             <th>Price</th>
                                             <th>Status</th>
                                             <th>Date</th>
@@ -50,7 +50,7 @@
         <% for (let i=0; i < orders.length;i++) { %>
             <% for (let j = 0; j < orders[i].product.length; j++) { %>
             <tr>
-                <td>2323</td>
+                <td><%= i%></td>
                 <td><b><%= orders[i].product[j].title  %></b></td>
                
                 <td>₹<%= orders[i].totalPrice %></td>
@@ -107,26 +107,29 @@
                                 </table>
                             </div> <!-- table-responsive //end -->
                         </div> <!-- card-body end// -->
+                        <% if (totalpages) { %>
+                            <div class="pagination justify-content-center">
+                              <% if (currentpage > 1) { %>
+                                <button class="btn btn-sm" "><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
+                              <% } %>
+                          
+                              <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
+                                <button class="btn btn-sm " "><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
+                              <% } %>
+                          
+                              <% if (currentpage < totalpages) { %>
+                                <button class="btn btn-sm" ><a href="?page=<%= currentpage + 1 %>">Next</a></button>
+                              <% } %>
+                            </div>
+                          <% } %>
                     </div> <!-- card end// -->
-                    <% if (totalpages) { %>
-                        <div class="pagination justify-content-center">
-                          <% if (currentpage > 1) { %>
-                            <button class="btn btn-sm" "><a href="?page=<%= currentpage - 1 %>">Previous</a></button>
-                          <% } %>
-                      
-                          <% for (let i = 1; i <= totalpages; i++) { %> <!-- Change the loop to start from 1 and go up to totalpages -->
-                            <button class="btn btn-sm " "><a href="?page=<%= i %>" class="<%= i === currentpage ? 'active' : '' %>"><%= i %></a></button>
-                          <% } %>
-                      
-                          <% if (currentpage < totalpages) { %>
-                            <button class="btn btn-sm" ><a href="?page=<%= currentpage + 1 %>">Next</a></button>
-                          <% } %>
-                        </div>
-                      <% } %>
+                    
                 </div>
                 
+                
               
-            </div>
+          
+        
            
         </section> <!-- content-main end// -->
         <script>
@@ -151,6 +154,30 @@ document.getElementById('filterOrders').addEventListener('change', function () {
     }
 });
 
+
+document.getElementById('downloadExcel').addEventListener('click', function () {
+    const selectedValue = document.getElementById('filterOrders').value;
+    let url = '/api/admin/salesReport?format=excel&date=';
+    
+    switch (selectedValue) {
+        case 'today':
+            url += 'today';
+            break;
+        case 'week':
+            url += 'week';
+            break;
+        case 'month':
+            url += 'month';
+            break;
+        case 'year':
+            url += 'year';
+            break;
+        default:
+            url += 'all';
+    }
+
+    window.location.href = url;
+});
 
         </script>
         <%- include('footer') %>

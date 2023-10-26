@@ -62,16 +62,21 @@ const allCategory=asyncHandler(async(req,res)=>{
 
 const editCategory=asyncHandler(async(req,res)=>{
     try {
-        const id=req.query.id;
-        const category=await Category.findById(id);
-        if(category)
-        {
-            res.render('editCategory',{category:category});
+        const id = req.query.id;
+
+        const user = await Category.findById(id)
+       
+        if (user) {
+            res.render('editCategory', { user: user })
+        } else {
+            res.redirect('/api/admin/category')
+
         }
+
     } catch (error) {
-        console.log("edit category error");
+        console.log('error happence in catogaryController editCatogary function', error);
     }
-});
+})
 
 
 //update category
@@ -81,18 +86,20 @@ const updateCategory=asyncHandler(async(req,res)=>{
         const id = req.body.id;
         const img = req.file ? req.file.filename : null;
 
-        let updateData = {
-            name: req.body.name,
-            description: req.body.description  
-        };
-
         if (img) {
-            updateData.image = img;
+            await Category.findByIdAndUpdate(id, {
+                name: req.body.name,
+                description: req.body.description, // Use the description from the request body
+                image: req.file.filename
+            }, { new: true })
+       } else {
+            await Category.findByIdAndUpdate(id, {
+                name: req.body.name,
+                description: req.body.description,
+
+            }, { new: true })
         }
-
-        await Category.findByIdAndUpdate(id, updateData, { new: true });  // Corrected model name
-
-        res.redirect('/api/admin/category');
+        res.redirect('/api/admin/category')
     } catch (error) {
         console.log("update category error");
     }
