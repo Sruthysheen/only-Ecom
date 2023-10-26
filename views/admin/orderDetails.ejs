@@ -76,9 +76,32 @@
                                 <% } else if(order.status=='canceled'){ %>
 
                                   <button class="btn btn-primary">Cancelled</button>
+
+
+                                  <% } else if(order.status=='returnreject'){ %>
+
+                                    <button class="btn btn-primary">Return Rejected</button>
+                                  
+                                <% } else if(order.status=='returnrequested'){ %>
+                                    <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200" id="statusSelect">
+                                        <option>Accept</option>
+                                        <option>Reject</option>
+                                        
+        
+        
+                                    </select>
+                                  <button class="btn btn-primary" onclick="statusChange()">Save</button>
+
+                                    
                                             
                                 <% } %>
-                                         
+
+                                
+
+
+
+
+                                
                                           
 
 
@@ -126,7 +149,14 @@
                                 <div class="text">
                                     <h6 class="mb-1">Order info</h6>
                                     <p class="mb-1">
-                                        Shipping: <%= order.address[0].adressType %> <br> Pay method: <%= order.payment %> <br> Status:  <%= order.status %> 
+                                        Shipping: <%= order.address[0].adressType %> <br> Pay method: <%= order.payment %> <br> Status:   
+                                        <% if(order.status=="returned"){%>Returned<%}%>
+                                        <% if(order.status=="pending"){%>Pending<%}%>
+                                        <% if(order.status=="canceled"){%>Canceled<%}%>
+                                        <% if(order.status=="delivered"){%>Delivered<%}%>
+                                        <% if(order.status=="returnreject"){%>Return Rejected<%}%>
+                                        <% if(order.status=="shipped"){%>Shipped<%}%>
+                                        <% if(order.status=="conformed"){%>Confirmed<%}%> 
                                     </p>
                                     <!-- <a href="#">Download info</a> -->
                                 </div>
@@ -200,7 +230,15 @@
                                                     <dl class="dlist">
                                                         <dt class="text-muted">Status:</dt>
                                                         <dd>
-                                                            <span class="badge rounded-pill alert-success text-success"><%= order.status %></span>
+                                                            <span class="badge rounded-pill alert-success text-success"> 
+                                                                <% if(order.status=="returned"){%>Returned<%}%>
+                                                                <% if(order.status=="pending"){%>Pending<%}%>
+                                                                <% if(order.status=="canceled"){%>Canceled<%}%>
+                                                                <% if(order.status=="delivered"){%>Delivered<%}%>
+                                                                <% if(order.status=="returnreject"){%>Return Rejected<%}%>
+                                                                <% if(order.status=="shipped"){%>Shipped<%}%>
+                                                                <% if(order.status=="conformed"){%>Confirmed<%}%>
+                                                            </span>
                                                         </dd>
                                                     </dl>
                                                 </article>
@@ -230,6 +268,7 @@
 
         </section>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        
         <script>
            
 
@@ -356,6 +395,41 @@ function statusChange(){
            
         }
 
+        else if(selectedStatus=='Accept'){
+            $.ajax({
+                url : '/api/admin/changeStatusReturned?orderId=<%=order._id%>',
+                method:"get",
+                success: (response)=>{
+                    if(response.status){
+                        location.reload()
+                    }
+
+                }
+
+            })
+
+           
+        }
+
+
+        else if(selectedStatus=='Reject'){
+            $.ajax({
+                url : '/api/admin/changeStatusReturnRejected?orderId=<%=order._id%>',
+                method:"get",
+                success: (response)=>{
+                    if(response.status){
+                        location.reload()
+                    }
+
+                }
+
+            })
+
+           
+        }
+
+
+
 
 
 
@@ -367,5 +441,8 @@ function statusChange(){
 
 
         </script>
+
+
+
         <%- include('footer') %>
         

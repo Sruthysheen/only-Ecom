@@ -119,6 +119,9 @@
 
 
 
+
+
+
                             <% for (let i = 0; i < product.images.length; i++) { %>
                             <div class="col-md-9">
                                 <div class="mb-4">
@@ -155,7 +158,8 @@ const price = document.getElementsByName('price')[0].value;
 const color = document.getElementsByName('color')[0].value;
 const quantity = document.getElementsByName('quantity')[0].value;
 const size = document.getElementsByName('size')[0].value;
-const images = document.getElementsByName('images')[0].files;
+const existingImagesCount = document.querySelectorAll('img[src^="/admin/assets/imgs/category/"]').length;
+const newImages = document.getElementsByName('images')[0].files.length;
 
 
 
@@ -193,10 +197,10 @@ if (!size.trim()) {
     displayErrorMessage('size', 'Please specify a size.');
     isValid = false;
 }
-if (images.length === 0) {
-    displayErrorMessage('images', 'Please select at least one image.');
-    isValid = true;
-}
+if (existingImagesCount + newImages === 0) {
+        displayErrorMessage('images', 'A product must have at least one image.');
+        isValid = false;
+    }
 
 
 return isValid;

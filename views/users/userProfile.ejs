@@ -4,7 +4,7 @@
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="index.html" rel="nofollow">Home</a>
+                <a href="/api/user/index" rel="nofollow">Home</a>
                 <span></span> Pages
                 <span></span> Account
             </div>
@@ -246,7 +246,7 @@
                                                                 <td><%= i%></td>
                                                                 <td><%= order[i].createdOn.toLocaleDateString() %></td>
                                                                 <td><%= order[i].status %></td>
-                                                                <td>$<%= (order[i].totalPrice ).toFixed(2)%> </td>
+                                                                <td>₹<%= (order[i].totalPrice ).toFixed(2)%> </td>
                                                                 <td><a href="/api/user/orderDetails?orderId=<%= order[i]._id %>" class="btn-small d-block">View</a></td>
                                                             </tr>
 
@@ -262,26 +262,38 @@
                                 <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5 class="mb-0">Wallet Transaction</h5>
+                                            <h5 class="mb-0">Wallet transaction</h5>
                                         </div>
-                                        <div class="card-body contact-from-area">
-                                            <p>To track your order please enter your OrderID in the box below and press "Track" button. This was given to you on your receipt and in the confirmation email you should have received.</p>
-                                            <div class="row">
-                                                <div class="col-lg-8">
-                                                    <form class="contact-form-style mt-30 mb-50" action="#" method="post">
-                                                        <div class="input-style mb-20">
-                                                            <label>Order ID</label>
-                                                            <input name="order-id" placeholder="Found in your order confirmation email" type="text" class="square">
-                                                        </div>
-                                                        <div class="input-style mb-20">
-                                                            <label>Billing email</label>
-                                                            <input name="billing-email" placeholder="Email you used during checkout" type="email" class="square">
-                                                        </div>
-                                                        <button class="submit submit-auto-width" type="submit">Track</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>id</th>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                    <th>Total</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <% for (let i=0; i < user.history.length;i++) { %>
+                                                    <tr>
+                                                        <td><%=i%></td>
+                                                        <td><%= new Date(user.history[i].timestamp).toLocaleDateString() %></td>
+                                                      
+                                                        <td><%= user.history[i].status %></td>
+                                                        <td>₹<%= (user.history[i].amount ).toFixed(2)%> </td>
+                                                        
+                                                    </tr>
+
+                                                    <% } %> 
+                                                   
+                                                   
+                                               
+                                               
+                                                
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
@@ -357,40 +369,48 @@
                                         </div>
                                         <div class="card-body">
                                            
-                                            <form method="post" action="/api/user/addUserAddress" >
+                                            <form method="post" action="/api/user/addUserAddress" onsubmit="return validateForm()">
                                                 <div class="row">
                                                     <div class="form-group col-md-12">
                                                         <label><h5>Full Name</h5></label>
                                                         <input required="" class="form-control square" name="fullName" type="text">
+                                                        <span class="error" id="fullNameError"></span>
                                                     </div>
                                                     
                                                     <div class="form-group col-md-12">
                                                         <label><h5>Mobile number</h5></label>
                                                         <input required="" class="form-control square" name="mobile" type="text">
+                                                        <span class="error" id="mobileError"></span>
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label><h5>Region</h5></label>
                                                         <input required="" class="form-control square" name="region" type="text">
+                                                        <span class="error" id="regionError"></span>
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label><h5>Pincode</h5></label>
                                                         <input required="" class="form-control square" name="pinCode" type="text">
+                                                        <span class="error" id="pinCodeError"></span>
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label><h5>Flat, House no., Building, Company, Apartment</h5></label>
                                                         <input required="" class="form-control square" name="addressLine" type="text">
+                                                        <span class="error" id="addressLineError"></span>
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label> <h5>Area, Street, Sector, Village</h5></label>
                                                         <input required="" class="form-control square" name="areaStreet" type="text">
+                                                        <span class="error" id="areaStreetError"></span>
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label><h5>Landmark</h5> </label>
                                                         <input required="" class="form-control square" name="ladmark" type="text">
+                                                        <span class="error" id="ladmarkError"></span>
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label><h5>Town/City</h5> </label>
                                                         <input required="" class="form-control square" name="townCity" type="text">
+                                                        <span class="error" id="townCityError"></span>
                                                        
                                                         <div class="form-group col-md-6">
                                                             <label><h5>State</h5></label>
@@ -603,6 +623,77 @@ rzp1.open();
      
     
   </script>
+
+<script>
+    function validateForm() {
+        var isValid = true;
+    
+        // Reset error messages
+        var errors = document.querySelectorAll('.error');
+        for(var i = 0; i < errors.length; i++) {
+            errors[i].textContent = '';
+        }
+    
+        // Validate Full Name
+        var fullName = document.querySelector('[name="fullName"]').value.trim();
+        if(fullName === "") {
+            document.getElementById('fullNameError').textContent = "Full Name cannot be empty or just spaces!";
+            isValid = false;
+        }
+    
+        // Validate Mobile
+        var mobile = document.querySelector('[name="mobile"]').value.trim();
+        if(mobile === "" || isNaN(mobile) || mobile.length !== 10) {
+            document.getElementById('mobileError').textContent = "Please enter a valid 10-digit mobile number!";
+            isValid = false;
+        }
+    
+        // Validate Region
+        var region = document.querySelector('[name="region"]').value.trim();
+        if(region === "") {
+            document.getElementById('regionError').textContent = "Region cannot be empty or just spaces!";
+            isValid = false;
+        }
+    
+        // Validate PinCode
+        var pinCode = document.querySelector('[name="pinCode"]').value.trim();
+        if(pinCode === "" || isNaN(pinCode)) {
+            document.getElementById('pinCodeError').textContent = "Please enter a valid PinCode!";
+            isValid = false;
+        }
+    
+        // Validate AddressLine
+        var addressLine = document.querySelector('[name="addressLine"]').value.trim();
+        if(addressLine === "") {
+            document.getElementById('addressLineError').textContent = "Address cannot be empty or just spaces!";
+            isValid = false;
+        }
+    
+        // Validate AreaStreet
+        var areaStreet = document.querySelector('[name="areaStreet"]').value.trim();
+        if(areaStreet === "") {
+            document.getElementById('areaStreetError').textContent = "Area/Street cannot be empty or just spaces!";
+            isValid = false;
+        }
+    
+        // Validate Landmark
+        var ladmark = document.querySelector('[name="ladmark"]').value.trim();
+        if(ladmark === "") {
+            document.getElementById('ladmarkError').textContent = "Landmark cannot be empty or just spaces!";
+            isValid = false;
+        }
+    
+        // Validate Town/City
+        var townCity = document.querySelector('[name="townCity"]').value.trim();
+        if(townCity === "") {
+            document.getElementById('townCityError').textContent = "Town/City cannot be empty or just spaces!";
+            isValid = false;
+        }
+    
+        return isValid;
+    }
+    </script>
+    
   
       
 

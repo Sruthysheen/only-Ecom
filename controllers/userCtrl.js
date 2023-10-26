@@ -33,25 +33,27 @@ const loadIndex = asyncHandler(async (req, res) => {
     try {
         const userId = req.session.user;
         if(userId){
+            const womens=await Product.find({category:"WOMEN'S FASHION"})
             const category=await Category.find({status:true});
             console.log(category.length,'>>>>>>>');
-            const product = await Product.find({isDeleted:false,status:true}).limit(12);
+            const product = await Product.find({isDeleted:false,status:true});
           
             const user= await User.findById(userId);
             const banner= await Banner.find();
             req.session.Product = product;
     
-        res.render("index", { user, product,banner,category});
+        res.render("index", { user, product,banner,category,womens});
     }
         else{
+            const womens=await Product.find({category:"WOMEN'S FASHION"});
             const category=await Category.find({status:true});
             console.log(category.length,'>>>>>>>');
-            const product = await Product.find({isDeleted:false,status:true}).limit(12);;
+            const product = await Product.find({isDeleted:false,status:true});
             const user= await User.findById(userId);
             const banner= await Banner.find();
             req.session.Product = product;
     
-        res.render("index", { user, product,banner,category});
+        res.render("index", { user, product,banner,category,womens});
 
         }
     } catch (error) {
@@ -193,7 +195,7 @@ const loginUser=async(req,res)=>{
 
 const emailForgot =asyncHandler(async(req,res)=>{
     try {
-        console.log('JJJJJJJJJJJJJJJJJJJJJJJJJj');
+       
         res.render('forgotOTP')
     } catch (error) {
         
@@ -609,6 +611,11 @@ const deleteAddress=asyncHandler(async(req,res)=>{
         console.log("error in deleteAddress function",error);
     }
 })
+
+
+//buy now------------------------------------------------------------
+
+
 
 
 

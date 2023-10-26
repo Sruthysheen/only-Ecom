@@ -88,7 +88,7 @@ const invoices=async(req,res)=>{
               },
               // Your own data
               sender: {
-                company: "EVARA",
+                company: "ONLY",
                 address: "Feel your Style",
                 city: "Ernakulam",
                 country: "India",

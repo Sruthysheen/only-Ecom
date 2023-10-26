@@ -174,10 +174,12 @@ const aProductPage = asyncHandler(async (req, res) => {
        const user=await User.findById(userId);
        const productId=req.query.id;
        const product=await Product.findById(productId);
+       console.log('this is product',product);
+       const relatedPr = await Product.find({ category: product.category }).limit(4);
 
        if(product)
        {
-        res.render('aProduct',{user,product})
+        res.render('aProduct',{user,product,relatedPr})
        }
 
 
@@ -192,27 +194,32 @@ const aProductPage = asyncHandler(async (req, res) => {
 
 const shopProduct = asyncHandler(async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 4; 
+        const userId=req.session.user;
+        const user=await User.findById(userId)
+//   console.log(req.query);
+        const product = await Product.find({isDeleted:false});
+            
 
-    // Calculate the skip value to determine 
-    const skip = (page - 1) * limit;
+        // Get the total number of products in the database
 
-    const product = await Product.find()
-        .skip(skip)
-        .limit(limit);
+        // Calculate the total number of pages based on the total products and limit
+        
 
-    // Get the total number of products in the database
-    const totalProductsCount = await Product.countDocuments();
 
-    // Calculate the total number of pages based on the total products and limit
-    const totalPages = Math.ceil(totalProductsCount / limit);
+        const itemsperpage = 6;
+        const currentpage = parseInt(req.query.page) || 1;
+        const startindex = (currentpage - 1) * itemsperpage;
+        const endindex = startindex + itemsperpage;
+        const totalpages = Math.ceil(product.length / 6);
+        const currentproduct = product.slice(startindex,endindex);
 
-    res.render('shop', { product, page, totalPages ,limit });
+
+        res.render('shop', { product:currentproduct, totalpages,currentpage,user });
     } catch (error) {
-        console.log('Error occured in shopProduct function', error);
+        console.log('Error happened in product controller shop function', error);
     }
 });
+//---------
 
 
 

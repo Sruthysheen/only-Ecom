@@ -15,7 +15,7 @@ const isLogged = (req, res, next) => {
                 res.status(500).send('Server Error');
             });
     } else {
-        res.redirect('/api/user/index');
+        res.redirect('/api/user/login');
     }
 }
 

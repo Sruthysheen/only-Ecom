@@ -1,10 +1,15 @@
 const express= require("express");
 const router=express();
+const errorHandler=require('../middleware/errorHandler')
+
+
+
+
 const {loginAdmin, adminDashboard,adminVerifyLogin, userField, blockUser, unblockUser,logout}=require('../controllers/adminctrl');
 const { allCategory,addCategory,editCategory, deleteCategory,updateCategory,unlistCategory, listCategory } = require("../controllers/categoryCtrl");
 const {allProducts,addProduct,createProduct,editProduct,productEdited,unlistProduct,listProduct,deleteProduct,deleteSingleImage}=require("../controllers/productCtrl");
 const {adminOrderDetails,changeStatusPending,changeStatusConfirmed,changeStatusShipped,changeStatusCanceled,
-    changeStatusDelivered,changeStatusReturned, adminOrderList,loadsalesReport,salesReport}=require('../controllers/orderCtrl');
+    changeStatusDelivered,changeStatusReturned, adminOrderList,loadsalesReport,salesReport,changeStatusReturnRejected}=require('../controllers/orderCtrl');
 const {loadCoupon,addCoupon,coupon,editCoupon,deleteCoupon,updateCoupon}=require('../controllers/couponCtrl')
 const {banner,addNewBanner,createBanner,editBanner,updateBanner,deleteBanner}=require('../controllers/bannerCtrl');
 router.set('view engine','ejs'); 
@@ -13,15 +18,23 @@ router.set('views','./views/admin');
 
 const {upload}=require('../multer/multer');
 
+const {
+    isAdminAuth
+}=require('../middleware/adminAuth')
 
-const {bannerCrop}=require('../sharp/imageCrop');
+
+
+
+
+
+
 
 //admin route------------------------------------------------------------------------
 
 router.get('/login',loginAdmin);
 router.post('/login',adminVerifyLogin);
-router.get('/dashboard',adminDashboard);
-router.get('/users',userField);
+router.get('/dashboard',isAdminAuth,adminDashboard);
+router.get('/users',isAdminAuth,userField);
 router.get('/block',blockUser);
 router.get('/unblock',unblockUser);
 router.get('/logout',logout);
@@ -29,66 +42,68 @@ router.get('/logout',logout);
 
 //product route-------------------------------------------------------------------------
 
-router.get('/product',allProducts);
-router.get('/product/:page', allProducts);
-router.get('/addProduct',addProduct);
-router.post('/createProduct',upload.array('images', 12),createProduct);
-router.get('/editProduct',editProduct);
-router.post('/productEdited',upload.array('images', 12),productEdited);
-router.get('/unlistProduct',unlistProduct);
-router.get('/listProduct',listProduct);
-router.get('/deleteProduct',deleteProduct);
-router.get('/deleteSingleImage',deleteSingleImage);
+router.get('/product',isAdminAuth,allProducts);
+router.get('/product/:page',isAdminAuth,allProducts);
+router.get('/addProduct',isAdminAuth,addProduct);
+router.post('/createProduct',isAdminAuth,upload.array('images', 12),createProduct);
+router.get('/editProduct',isAdminAuth,editProduct);
+router.post('/productEdited',isAdminAuth,upload.array('images', 12),productEdited);
+router.get('/unlistProduct',isAdminAuth,unlistProduct);
+router.get('/listProduct',isAdminAuth,listProduct);
+router.get('/deleteProduct',isAdminAuth,deleteProduct);
+router.get('/deleteSingleImage',isAdminAuth,deleteSingleImage);
 
 
 
 
 //category route--------------------------------------------------------------------------
 
-router.get('/category',allCategory)
-router.post('/addCategory',upload.single('image'),addCategory);
-router.get('/editCategory',editCategory);
-router.post('/updateCategory',upload.single('image'),updateCategory);
-router.get('/deleteCategory',deleteCategory);
-router.get('/unlistCategory',unlistCategory);
-router.get('/listCategory',listCategory);
+router.get('/category',isAdminAuth,allCategory)
+router.post('/addCategory',isAdminAuth,upload.single('image'),addCategory);
+router.get('/editCategory',isAdminAuth,editCategory);
+router.post('/updateCategory',isAdminAuth,upload.single('image'),updateCategory);
+router.get('/deleteCategory',isAdminAuth,deleteCategory);
+router.get('/unlistCategory',isAdminAuth,unlistCategory);
+router.get('/listCategory',isAdminAuth,listCategory);
 
 
 
 //order route-------------------------------------------------------------------------------
 
-router.get('/adminOrderList',adminOrderList);
-router.get('/adminOrderDetails',adminOrderDetails);
-router.get('/changeStatusPending',changeStatusPending);
-router.get('/changeStatusConfirmed',changeStatusConfirmed);
-router.get('/changeStatusShipped',changeStatusShipped);
-router.get('/changeStatusCanceled',changeStatusCanceled);
-router.get('/changeStatusdelivered',changeStatusDelivered);
-router.get('/changeStatusReturned',changeStatusReturned);
+router.get('/adminOrderList',isAdminAuth,adminOrderList);
+router.get('/adminOrderDetails',isAdminAuth,adminOrderDetails);
+router.get('/changeStatusPending',isAdminAuth,changeStatusPending);
+router.get('/changeStatusConfirmed',isAdminAuth,changeStatusConfirmed);
+router.get('/changeStatusShipped',isAdminAuth,changeStatusShipped);
+router.get('/changeStatusCanceled',isAdminAuth,changeStatusCanceled);
+router.get('/changeStatusdelivered',isAdminAuth,changeStatusDelivered);
+router.get('/changeStatusReturned',isAdminAuth,changeStatusReturned);
+router.get('/changeStatusReturnRejected',isAdminAuth,changeStatusReturnRejected);
+
 
 
 //coupen route------------------------------------------------------------------------------
 
-router.get('/addCoupon',loadCoupon);
-router.post('/addCoupon',addCoupon);
-router.get('/coupon',coupon);
-router.get('/editCoupon',editCoupon);
-router.post('/updateCoupon',updateCoupon);
-router.get('/deleteCoupon',deleteCoupon);
+router.get('/addCoupon',isAdminAuth,isAdminAuth,loadCoupon);
+router.post('/addCoupon',isAdminAuth,addCoupon);
+router.get('/coupon',isAdminAuth,coupon);
+router.get('/editCoupon',isAdminAuth,editCoupon);
+router.post('/updateCoupon',isAdminAuth,updateCoupon);
+router.get('/deleteCoupon',isAdminAuth,deleteCoupon);
 
 //banner route--------------------------------------------------------------------------------
 
-router.get('/banner',banner);
-router.get('/addNewBanner',addNewBanner);
-router.post('/createBanner',upload.single('image'),createBanner);
-router.get('/editBanner',editBanner);
-router.post('/updateBanner',upload.single('image'),updateBanner);
-router.get('/deleteBanner',deleteBanner);
+router.get('/banner',isAdminAuth,banner);isAdminAuth,
+router.get('/addNewBanner',isAdminAuth,addNewBanner);
+router.post('/createBanner',isAdminAuth,upload.single('image'),createBanner);
+router.get('/editBanner',isAdminAuth,editBanner);
+router.post('/updateBanner',isAdminAuth,upload.single('image'),updateBanner);
+router.get('/deleteBanner',isAdminAuth,deleteBanner);
 
 //sales report------------------------------------------------------------------------------
 
-router.get('/loadsalesReport',loadsalesReport)
-router.get('/salesReport',salesReport)
+router.get('/loadsalesReport',isAdminAuth,loadsalesReport);
+router.get('/salesReport',isAdminAuth,salesReport);
 
 
 

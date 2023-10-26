@@ -4502,7 +4502,7 @@ table .product-thumbnail img {
 }
 
 .product-color-red {
-  background: #ff596d;
+  background: #ec162f;
 }
 
 .product-color-yellow {
@@ -4514,7 +4514,7 @@ table .product-thumbnail img {
 }
 
 .product-color-orange {
-  background: #ffbb51;
+  background: #f76666;
 }
 
 .product-color-cyan {
@@ -4522,11 +4522,23 @@ table .product-thumbnail img {
 }
 
 .product-color-green {
-  background: #38cf46;
+  background: #102111;
 }
 
 .product-color-purple {
-  background: #ff8ff8;
+  background: #431a2f;
+}
+.product-color-black {
+  background: #000;
+}
+.product-color-pink {
+  background: #f2b6e1;
+}
+.product-color-blue {
+  background: #7a9df0;
+}
+.product-color-grey {
+  background: #808080;
 }
 
 .detail-gallery .slick-slider {

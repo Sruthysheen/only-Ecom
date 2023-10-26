@@ -12,6 +12,13 @@
                         <option value="month">Report of this month</option>
                         <option value="year">Report of this year</option>
                     </select>
+                 
+                </div>
+
+                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    
+                    <a class="btn btn-primary" href="#">Sales Report</a>
+                    <!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print mr-5"></i>Print</a> -->
                 </div>
                 
             </div>
@@ -50,19 +57,23 @@
 
                 <% if (orders[i].status=='pending') { %>
 
-                <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                <% } else if(orders[i].status=='conformed'){ %>
-                    <td><span class="badge rounded-pill alert-success">conformed</span></td>
-                    <% } else if(orders[i].status=='canceled'){ %>
-                        <td><span class="badge rounded-pill alert-danger">Cancelled</span></td>
-                <% } else if(orders[i].status=='shipped'){ %>
-                    <td><span class="badge rounded-pill alert-success">shipped</span></td>
-                    <% } else if(orders[i].status=='delivered'){ %>
-                        <td><span class="badge rounded-pill alert-success">delivered</span></td>
-                        <% } else if(orders[i].status=='returned'){ %>
-                            <td><span class="badge rounded-pill alert-danger">returned</span></td>
-
-                        <% } %>
+                    <td><span class="badge rounded-pill alert-warning">Pending</span></td>
+                    <% } else if(orders[i].status=='conformed'){ %>
+                        <td><span class="badge rounded-pill alert-success">conformed</span></td>
+                        <% } else if(orders[i].status=='canceled'){ %>
+                            <td><span class="badge rounded-pill alert-danger">Cancelled</span></td>
+                    <% } else if(orders[i].status=='shipped'){ %>
+                        <td><span class="badge rounded-pill alert-success">shipped</span></td>
+                        <% } else if(orders[i].status=='delivered'){ %>
+                            <td><span class="badge rounded-pill alert-success">delivered</span></td>
+                            <% } else if(orders[i].status=='returned'){ %>
+                                <td><span class="badge rounded-pill alert-danger">returned</span></td>
+                                <% } else if(orders[i].status=='returnrequested'){ %>
+                                    <td><span class="badge rounded-pill alert-danger">return requested</span></td>
+                                    <% } else if(orders[i].status=='returnreject'){ %>
+                                        <td><span class="badge rounded-pill alert-danger">return rejected</span></td>
+    
+                            <% } %>
 
                         <td><%= orders[i].createdOn.toLocaleDateString() %></td>
                 <td class="text-end">

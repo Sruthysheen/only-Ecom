@@ -10,6 +10,7 @@ const getCart=asyncHandler(async(req,res)=>{
     
 const userId=req.session.user;
 const user=await User.findById(userId);
+if(user){
 
 
 
@@ -30,6 +31,7 @@ for (const item of user.cart) {
 
 
         res.render('cart',{ product,cart: user.cart, quantity, totalSubTotal,user });
+}
 
 
     } catch (error) {

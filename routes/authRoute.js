@@ -2,8 +2,8 @@ const express=require("express");
 
 const router=express.Router();
 const {upload}=require('../multer/multer');
-// const config=require("../config/config");
 const auth = require('../middleware/userAuth');
+const errorHandler=require('../middleware/errorHandler')
 
 
 const {aProductPage,shopProduct}=require('../controllers/productCtrl');
@@ -31,12 +31,13 @@ const {
     emailForgot,
     deleteAddress} = require("../controllers/userCtrl");
 
-const {checkOut,orderPlaced,orderDetails,orderPage,allOrderDetails,cancelOrder,returnOrder,verifyPayment,useWallet}=require('../controllers/orderCtrl');
+const {checkOut,orderPlaced,orderDetails,orderPage,allOrderDetails,cancelOrder,returnOrder,verifyPayment,useWallet,buyNOw,buynowPlaceOrder}=require('../controllers/orderCtrl');
 
 const {productSearch,CategoryFilter,filterSearch,colorFilter,priceFilter,brandFilter,clearFilter,sortByPrice,sizeFilter}=require('../controllers/filterCtrl');
 const {validateCoupon}=require('../controllers/couponCtrl');
 const {addToList,Wishlist,deleteWishlistItem}=require('../controllers/wishlistCtrl');
 const {addMoneyWallet,updateMongoWallet,sumWallet,sumWalletBuynow,walletPayment}=require('../controllers/walletCtrl');
+const {aboutpage}=require('../controllers/aboutCtrl');
 const {invoice,invoices}=require('../controllers/invoiceCtrl');
 
 const { isLogged} = require('../middleware/userAuth')
@@ -62,6 +63,13 @@ router.post('/updatePassword', updatePassword);
 router.get('/logout',logout);
 router.post('/resendOTP',resendOtp);
 router.get('/emailForgot',emailForgot)
+
+
+
+//about--------------------------------------------------------------------------------
+
+router.get('/about',aboutpage)
+
 
 
 //user profile----------------------------------------------------------------------
@@ -103,6 +111,8 @@ router.get('/allOrderDetails',isLogged,allOrderDetails);
 router.get('/cancelOrder',isLogged,cancelOrder);
 router.post('/verifyPayment',isLogged,verifyPayment)
 router.get('/return',isLogged,returnOrder);
+router.get('/buyNOw',isLogged,buyNOw);
+router.post('/buynowPlaceOrder',isLogged,buynowPlaceOrder);
 
 
 
