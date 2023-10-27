@@ -6,8 +6,7 @@ const Category = require("../model/categoryModel");
 const jwt = require('jsonwebtoken');
 const Order=require("../model/orderModel");
 const Banner=require('../model/bannerModel')
-const bcrypt=require('bcrypt')
-
+const bcrypt = require('bcryptjs');
 
 
 
