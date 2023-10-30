@@ -219,7 +219,7 @@ const verifyUser=asyncHandler(async(req,res)=>{
             if (findUser && (await findUser.isPasswordMatched(password))) {
                 req.session.user = findUser._id;
                 console.log('this is if');
-                res.redirect("/api/user/index");
+                res.redirect("/api/user/");
             } else {
                 console.log('this is else');
 
@@ -257,7 +257,7 @@ console.log('this is the session otp',req.session.userOTP);
              req.session.user = users._id
             console.log('this is saved user data>>>>>>>>>>>>>>>>>>>>>>',users);
 
-            res.redirect("/api/user/index");
+            res.redirect("/api/user/");
 
         }
         else{
@@ -273,7 +273,7 @@ const logout = asyncHandler(async (req, res) => {
     try {
         req.session.destroy(err => {
             if (err) throw err;
-            res.redirect('/api/user/index');
+            res.redirect('/api/user/');
         });
     } catch (error) {
         console.error("Error during logout:", error);
@@ -393,7 +393,7 @@ const updatePassword = asyncHandler(async (req, res) => {
             );
 
 
-            res.redirect("/api/user/index");
+            res.redirect("/api/user/");
         }
     } catch (error) {
         console.log(

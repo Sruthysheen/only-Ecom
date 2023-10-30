@@ -50,7 +50,7 @@ const { isLogged} = require('../middleware/userAuth')
 
 
 // user---------------------------------------------------------------------------
-router.get('/index',loadIndex);
+router.get('/',loadIndex);
 router.get('/register',registerUser);
 router.post('/register',createUser);
 router.post('/emailVerified',emailVerified)
