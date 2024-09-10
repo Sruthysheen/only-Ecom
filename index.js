@@ -20,7 +20,7 @@ dbConnect();
 
 
 app.use(express.static('public'));
-app.use(morgan())
+app.use(morgan('combined'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.set('view engine','ejs');
